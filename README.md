@@ -4,4 +4,4 @@
 - noa/frontend sisältää käyttöliittymän koodit
 
 - esimerkkinäkymä käyttöliittymästä
-  ![kuva käyttöliittymästä](<Screenshot 2026-11-11 at 08-41-23 AT00BY05-Frontend.png>)
+  ![esimerkkikuva käyttöliittymästä](image.png)
