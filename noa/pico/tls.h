@@ -1,0 +1,1 @@
+void http_init(const char *measurement_json);

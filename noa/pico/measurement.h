@@ -1,0 +1,1 @@
+bool get_measured_temperature(char *buffer, size_t buffer_max_len);

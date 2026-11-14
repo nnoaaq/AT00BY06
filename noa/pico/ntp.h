@@ -1,0 +1,1 @@
+int get_time(struct timespec *ts_ptr);
