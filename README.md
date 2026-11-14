@@ -3,5 +3,7 @@
 - noa/backend sisältää AWS Serverlessiin toteutetun tietokannan koodit
 - noa/frontend sisältää käyttöliittymän koodit
 
-- esimerkkinäkymä käyttöliittymästä
-  ![esimerkkikuva käyttöliittymästä](image.png)
+#### Ryhmäläisten toteuttamat koodit löytyvät omista kansiostaan (etunimi)
+
+Käyttöliittymä saatavilla https://at00by06-frontend.vercel.app/
+![esimerkkikuva käyttöliittymästä](image.png)
