@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AT00BY05-Frontend",
+  title: "AT00BY06-Frontend",
   description: "Mittaushistoria",
 };
 

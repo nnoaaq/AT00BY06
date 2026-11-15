@@ -3,7 +3,7 @@ const { databaseUrl } = process.env;
 
 // FUNKTIO JOKA HAKEE SENSORIT TIETOKANNASTA
 // PALAUTTAA AINA TAULUKON
-export const getSensors = async () => {
+export const fetchSensors = async () => {
   try {
     if (!databaseUrl) throw new Error();
     const output = await fetch(`${databaseUrl}/sensors`, {
