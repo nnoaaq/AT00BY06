@@ -1,6 +1,0 @@
-node_modules/
-.env.local
-.env
-.vscode
-**/aws_config.h
-**/wifi_config.h
