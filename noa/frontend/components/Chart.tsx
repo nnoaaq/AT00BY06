@@ -32,6 +32,15 @@ export const ChartComponent = ({
 }) => {
   // NÄYTTÄÄ VAIN ANNETUN DATAN!!! TILANHALLINTA SENSORCONTROLLER
   const isTemperatureChart = chartType === "temperature";
+  const convertTailwindColor = (variableName: string) => {
+    if (typeof window === "undefined") return "";
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(variableName)
+      .trim();
+  };
+  const chartColor = isTemperatureChart
+    ? convertTailwindColor("--color-temperature")
+    : convertTailwindColor("--color-humidity");
   const chartData = {
     labels: measurements.map((measurement) =>
       convertTime(measurement.timeStamp),
@@ -41,12 +50,8 @@ export const ChartComponent = ({
         label: isTemperatureChart ? "Lämpötila" : "Kosteus",
         data: measurements.map((measurement) => measurement[chartType]),
         fill: false,
-        borderColor: isTemperatureChart
-          ? "oklch(66.6% 0.179 58.318)"
-          : "oklch(82.8% 0.189 84.429)",
-        backgroundColor: isTemperatureChart
-          ? "oklch(66.6% 0.179 58.318)"
-          : "oklch(82.8% 0.189 84.429)",
+        borderColor: chartColor,
+        backgroundColor: chartColor,
         tension: 0.1,
         pointRadius: 0,
         pointHoverRadius: 6,

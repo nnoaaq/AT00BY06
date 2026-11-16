@@ -179,10 +179,10 @@ export const DatePicker = ({
   }
   return (
     <div className="flex flex-col gap-2 relative">
-      <p className="text-zinc-100">Valitse päivämäärä</p>
+      <p className="text-foreground">Valitse päivämäärä</p>
       <button
         onClick={() => setShowCalendar(true)}
-        className="w-full  text-start text-zinc-100 cursor-pointer border border-zinc-600 p-2 rounded-xl outline-none hover:ring-1 hover:ring-amber-500 focus:ring-1 focus:ring-amber-500 transition-all duration-100 ease-in-out flex gap-2 items-center justify-between"
+        className="w-full  text-start text-foreground cursor-pointer border border-border p-2 rounded-xl outline-none hover:ring-1 hover:ring-highlight focus:ring-1 focus:ring-highlight transition-all duration-100 ease-in-out flex gap-2 items-center justify-between"
       >
         <div className="flex gap-2 items-center">
           <svg
@@ -237,7 +237,7 @@ export const DatePicker = ({
         onClose={() => setShowCalendar(false)}
         open={showCalendar}
         closedby={"any"}
-        className="absolute top-20 p-2 bg-zinc-900 rounded-md shadow-md border border-zinc-700 w-80"
+        className="absolute top-20 p-2 bg-background rounded-md shadow-md border border-border w-80"
       >
         <div className="flex justify-between">
           <div onClick={() => showMonth(1)}>
@@ -276,7 +276,7 @@ export const DatePicker = ({
             </svg>
           </div>
         </div>
-        <div className="grid grid-cols-7  text-center text-zinc-600">
+        <div className="grid grid-cols-7  text-center text-foreground">
           <p>Ma</p>
           <p>Ti</p>
           <p>Ke</p>

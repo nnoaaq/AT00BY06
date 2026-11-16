@@ -79,7 +79,7 @@ export const SensorController = ({
     fetch();
   }, [selectedSensor, selectedDays]);
   return (
-    <div>
+    <div className="flex flex-col gap-2 border border-border-dark rounded-xl shadow-md p-2">
       <DatePicker
         reset={selectedSensor}
         updateSelectedDays={(
@@ -105,7 +105,6 @@ export const SensorController = ({
             chartType="temperature"
             measurements={filteredMeasurements || []}
           />
-
           <ChartComponent
             chartType="humidity"
             measurements={filteredMeasurements || []}

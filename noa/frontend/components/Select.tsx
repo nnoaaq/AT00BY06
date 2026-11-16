@@ -19,10 +19,10 @@ export const SelectComponent = ({
   return (
     <div className="">
       <div className="flex flex-col gap-2 ">
-        <label htmlFor="sensors" className="text-zinc-100">
+        <label htmlFor="sensors" className="text-foreground">
           Valitse sensori
         </label>
-        <div className="w-full  text-start text-zinc-100 cursor-pointer border border-zinc-600 p-2 rounded-xl outline-none hover:ring-1 hover:ring-amber-500 focus:ring-1 focus:ring-amber-500 transition-all duration-100 ease-in-out flex gap-2 items-center justify-between">
+        <div className="w-full  text-start text-foreground cursor-pointer border border-border p-2 rounded-xl outline-none hover:ring-1 hover:ring-highlight focus:ring-1 focus:ring-highlight transition-all duration-100 ease-in-out flex gap-2 items-center justify-between">
           <select
             defaultValue={selectedSensor}
             onChange={(e) => handleChange(e.target.value)}
