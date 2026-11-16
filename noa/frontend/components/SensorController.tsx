@@ -5,8 +5,8 @@ import { SensorType } from "@/types/Sensor";
 import { getUnixTime } from "@/utils/Date";
 import { useEffect, useState } from "react";
 import { SelectComponent } from "./Select";
-import { DatePicker } from "./DatePicker";
 import { ChartComponent } from "./Chart";
+import { DatePicker } from "./DatePicker";
 export const SensorController = ({
   sensors,
   initialMeasurements,

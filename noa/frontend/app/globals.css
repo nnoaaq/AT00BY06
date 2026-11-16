@@ -8,4 +8,8 @@
   --color-border-dark: oklch(27.4% 0.006 286.033); /* zinc-800 */
   --color-temperature: oklch(82.8% 0.189 84.429); /* amber-400 */
   --color-humidity: oklch(70.7% 0.165 254.624); /* blue-400 */
+
+  --color-calendar-primary: oklch(87.1% 0.006 286.286); /* zinc-300 */
+  --color-calendar-secondary: oklch(37% 0.013 285.805); /* zinc-700*/
+  --color-calendar-current: oklch(70.7% 0.165 254.624); /* blue-400 */
 }
