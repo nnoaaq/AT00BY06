@@ -27,4 +27,4 @@ flowchart TD
     O -->|Kyllä| P["Merkitse lähetetyksi"]
     O -->|Ei| J
     P -->|palaa| E
-    ```
+```
