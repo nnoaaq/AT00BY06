@@ -62,6 +62,11 @@ export const ChartComponent = ({
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+    },
     scales: {
       x: {
         ticks: {

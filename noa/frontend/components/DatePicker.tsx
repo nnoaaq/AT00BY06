@@ -178,7 +178,7 @@ export const DatePicker = ({
     });
   }
   return (
-    <div className="flex flex-col gap-2 relative">
+    <div className="flex flex-col gap-2 relative w-full">
       <p className="text-foreground">Valitse päivämäärä</p>
       <button
         onClick={() => setShowCalendar(true)}

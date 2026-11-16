@@ -17,8 +17,8 @@ export const SelectComponent = ({
   };
 
   return (
-    <div className="">
-      <div className="flex flex-col gap-2 ">
+    <div className="w-full">
+      <div className="flex flex-col gap-2">
         <label htmlFor="sensors" className="text-foreground">
           Valitse sensori
         </label>

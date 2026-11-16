@@ -80,16 +80,7 @@ export const SensorController = ({
   }, [selectedSensor, selectedDays]);
   return (
     <div className="flex flex-col gap-2 border border-border-dark rounded-xl shadow-md p-2">
-      <DatePicker
-        reset={selectedSensor}
-        updateSelectedDays={(
-          days: { from: number; to: number } | undefined,
-        ) => {
-          if (!days) return;
-          setSelectedDays(days);
-        }}
-      />
-      {sensors && (
+      <div className="flex flex-col gap-2 w-full md:flex-row">
         <SelectComponent
           changeSelectedSensor={(sensorId: string) => {
             setSelectedSensor(sensorId);
@@ -98,7 +89,17 @@ export const SensorController = ({
           selectedSensor={selectedSensor}
           sensors={sensors}
         />
-      )}
+        <DatePicker
+          reset={selectedSensor}
+          updateSelectedDays={(
+            days: { from: number; to: number } | undefined,
+          ) => {
+            if (!days) return;
+            setSelectedDays(days);
+          }}
+        />
+      </div>
+
       {measurements && (
         <div>
           <ChartComponent
