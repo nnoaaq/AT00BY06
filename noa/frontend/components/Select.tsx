@@ -28,10 +28,11 @@ export const SelectComponent = ({
             onChange={(e) => handleChange(e.target.value)}
             name="sensors"
             id="sensors"
-            className="appearance-none w-full"
+            className="appearance-none w-full  outline-none"
           >
             {sensors.map((sensor) => (
               <option
+                className="text-foreground bg-background"
                 value={sensor.sensorId}
                 key={sensor.sensorId}
               >{`${sensor.sensorName} #${sensor.sensorId}`}</option>
