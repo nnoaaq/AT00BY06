@@ -1,12 +1,12 @@
 "use client";
+import { getMeasurementsFromSensor } from "@/api/Measurements";
+import { MeasurementType } from "@/types/Measurement";
+import { SensorType } from "@/types/Sensor";
+import { getUnixTime } from "@/utils/Date";
 import { useEffect, useState } from "react";
-import { SensorType } from "../types/Sensor";
 import { SelectComponent } from "./Select";
-import { MeasurementType } from "../types/Measurement";
-import { ChartComponent } from "./Chart";
-import { getUnixTime } from "../utils/Date";
-import { getMeasurementsFromSensor } from "../api/Measurements";
 import { DatePicker } from "./DatePicker";
+import { ChartComponent } from "./Chart";
 export const SensorController = ({
   sensors,
   initialMeasurements,

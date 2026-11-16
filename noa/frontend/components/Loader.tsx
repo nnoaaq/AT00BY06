@@ -1,11 +1,11 @@
 import { connection } from "next/server";
-import { SensorController } from "./SensorController";
 import { notFound } from "next/navigation";
-import { fetchSensors } from "../api/Sensors";
-import { getMeasurementsFromSensor } from "../api/Measurements";
-import { SensorType } from "../types/Sensor";
-import { getUnixTime } from "../utils/Date";
-import { MeasurementType } from "../types/Measurement";
+import { MeasurementType } from "@/types/Measurement";
+import { SensorType } from "@/types/Sensor";
+import { fetchSensors } from "@/api/Sensors";
+import { getUnixTime } from "@/utils/Date";
+import { getMeasurementsFromSensor } from "@/api/Measurements";
+import { SensorController } from "./SensorController";
 
 export const Loader = async () => {
   // HOITAA TIETOKANTA HAUT

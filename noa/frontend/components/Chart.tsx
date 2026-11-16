@@ -1,5 +1,6 @@
 "use client";
-import { MeasurementType } from "../types/Measurement";
+import { MeasurementType } from "@/types/Measurement";
+import { convertTime } from "@/utils/Date";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -11,7 +12,6 @@ import {
   PointElement,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { convertTime } from "../utils/Date";
 
 ChartJS.register(
   ArcElement,

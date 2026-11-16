@@ -6,4 +6,4 @@
 #### Ryhmäläisten toteuttamat koodit löytyvät omista kansiostaan (etunimi)
 
 Käyttöliittymä saatavilla https://at00by06-frontend.vercel.app/
-![esimerkkikuva käyttöliittymästä](image.png)
+![kuva käyttöliittymästä](image.png)

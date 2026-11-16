@@ -1,5 +1,6 @@
 "use client";
-import { SensorType } from "../types/Sensor";
+
+import { SensorType } from "@/types/Sensor";
 
 export const SelectComponent = ({
   sensors,

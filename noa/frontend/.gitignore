@@ -14,7 +14,7 @@
 /coverage
 
 # next.js
-/.next/
+.next/
 /out/
 
 # production
@@ -44,3 +44,4 @@ components.json
 eslint.config.mjs
 next.config.ts
 tsconfig.json
+README.md
