@@ -263,7 +263,7 @@ export const DatePicker = ({
           closedby={"any"}
           onClose={() => setShowCalendar(false)}
           open={showCalendar}
-          className="absolute top-20 w-100 border border-border-dark rounded-xl shadow-lg p-2 bg-background text-foreground text-center"
+          className="absolute top-20 w-full border border-border-dark rounded-xl shadow-lg p-2 bg-background text-foreground text-center"
         >
           <div className="flex justify-between">
             <button
