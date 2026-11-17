@@ -6,11 +6,14 @@ import { useState } from "react";
 export const SelectSensorComponent = ({
   sensors,
   updateSelectedSensor,
+  initialSelectedSensor,
 }: {
   sensors: SensorType[];
   updateSelectedSensor: (sensorId: string) => void;
+  initialSelectedSensor: string;
 }) => {
   const [selectIsOpen, setSelectIsOpen] = useState(false);
+  const [selectValue, setSelectValue] = useState(initialSelectedSensor);
   return (
     <div className="flex flex-col gap-2 w-full">
       <label htmlFor="sensor" className="text-foreground">
@@ -22,11 +25,13 @@ export const SelectSensorComponent = ({
           onBlur={() => setSelectIsOpen(false)}
           onChange={(e) => {
             setSelectIsOpen(false);
+            setSelectValue(e.target.value);
             updateSelectedSensor(e.target.value);
           }}
           onMouseDown={() => setSelectIsOpen((prev) => !prev)}
           name="sensor"
           id="sensor"
+          value={selectValue}
           className="appearance-none outline-none w-full"
         >
           {sensors.map((sensor) => (

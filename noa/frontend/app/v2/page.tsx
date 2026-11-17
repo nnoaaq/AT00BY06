@@ -19,14 +19,14 @@ export default async function Home() {
   const initialMeasurements: MeasurementType[] =
     await getMeasurementsFromSensor({
       ...currentDayUnixRange,
-      sensorId: sensors[0]?.sensorId,
+      sensorId: sensors[1]?.sensorId,
     });
   return (
     <div className="p-2">
       <Suspense fallback={<p>Sivua ladataan yhä.</p>}>
         <ClientComponent
           sensors={sensors}
-          initialSelectedSensor={sensors[0]?.sensorId}
+          initialSelectedSensor={sensors[1]?.sensorId}
           initialMeasurements={initialMeasurements}
         />
       </Suspense>

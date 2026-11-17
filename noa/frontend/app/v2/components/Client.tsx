@@ -146,6 +146,7 @@ export const ClientComponent = ({
     <div className="p-2 border border-border-dark rounded-xl shadow-lg flex flex-col gap-5">
       <div className="flex flex-col md:flex-row gap-2">
         <SelectSensorComponent
+          initialSelectedSensor={initialSelectedSensor}
           sensors={sensors}
           updateSelectedSensor={(sensorId: string) => {
             setSelecterSensor(sensorId);
