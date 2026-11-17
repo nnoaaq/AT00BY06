@@ -47,76 +47,57 @@ export const ClientComponent = ({
   // MITTAUSTEN HAKEMINEN SENSORIN TAI PÄIVÄMÄÄRÄN MUUTTUESSA
   useEffect(() => {
     const fetch = async () => {
-      // TARKISTETAAN ONKO SENSORILLA OLLENKAAN MITTAUKSIA CACHESSA
-      const sensorAlreadyInCache = measurementsCache.get(selectedSensor);
-      if (!sensorAlreadyInCache) {
-        const currentDayUnixRange = getCurrentDayUnixRange();
+      let timeRange;
+      if (!selectedDateRange) {
+        console.log("Ei valittua ajanjaksoa. Käytetään nykyistä päivää.");
+        timeRange = getCurrentDayUnixRange();
+      } else {
+        timeRange = selectedDateRange;
+      }
+      const datesToShow = getDatesBetweenUnixTimestamps(timeRange);
+      // HAETAAN SENSORIN MITTAUKSET CACHESTA TAI LUODAAN TYHJÄ RAKENNE
+      const measurementsInCache = measurementsCache.get(selectedSensor) || {
+        measurements: new Map<number, MeasurementType>(),
+        cachedDays: new Set<string>(),
+      };
+      // TARKISTETAAN, ONKO TIETOJA TALLENNETTU KYSEISELTÄ PÄIVÄLTÄ
+      // JOS YKSIKIN PÄIVÄ PUUTTUU, HAETAAN KOKO ANNETTU AIKAVÄLI
+      // VAIKKA HAETTAISIINKIN TURHASTI PÄIVIÄ
+      let missingDays = false;
+      for (let dateToShow of datesToShow) {
+        const dateAlreadyInCache =
+          measurementsInCache.cachedDays.has(dateToShow);
+        if (!dateAlreadyInCache) {
+          missingDays = true;
+        }
+      }
+      // AJANJAKSO TARKISTETTU
+      if (missingDays) {
         const fetchedMeasurements: MeasurementType[] =
-          await getMeasurementsFromSensor({
-            ...currentDayUnixRange,
+          await getMoreMeasurements({
+            ...timeRange,
             sensorId: selectedSensor,
           });
-        if (!fetchedMeasurements?.length) return;
-        // PÄIVITETÄÄN CACHEA UUSILLA MITTAUKSILLA
+        if (!fetchedMeasurements.length) return;
+        // MITTAUSTULOKSIA ON TULLUT
         setMeasurementsCache((prevCache) => {
           const map = new Map(prevCache);
-          const measurementsAlreadyInCache = map.get(selectedSensor) || {
+          const measurementsInCache = measurementsCache.get(selectedSensor) || {
             measurements: new Map<number, MeasurementType>(),
             cachedDays: new Set<string>(),
           };
           fetchedMeasurements.forEach((measurement) => {
-            measurementsAlreadyInCache.measurements.set(
+            measurementsInCache.measurements.set(
               measurement.timeStamp,
               measurement,
             );
           });
-          // DATE-OLIO HAETTUJEN POHJALTA (HAETAAN AINA TÄYSI VUOROKAUSI)
-          const dateObj = new Date(fetchedMeasurements[0].timeStamp * 1000);
-          measurementsAlreadyInCache.cachedDays.add(
-            dateObj.toLocaleDateString("fi-FI"),
-          );
-          map.set(selectedSensor, measurementsAlreadyInCache);
+          datesToShow.forEach((date) => {
+            measurementsInCache.cachedDays.add(date);
+          });
+          map.set(selectedSensor, measurementsInCache);
           return map;
         });
-        return;
-      }
-      // TARKISTETAAN ONKO SENSORILLA OIKEA PÄIVÄ
-      if (selectedDateRange) {
-        // TARKISTETAAN MITÄ PÄIVIÄ ON VÄLILLÄ
-        const datesBetweenUnixTimestamps =
-          getDatesBetweenUnixTimestamps(selectedDateRange);
-        for (let date of datesBetweenUnixTimestamps) {
-          const dateAlreadyInCache = sensorAlreadyInCache.cachedDays.has(date);
-          if (!dateAlreadyInCache) {
-            const unixSeconds = convertDateToUnix(date);
-            const fetchedMeasurements = await getMoreMeasurements({
-              ...unixSeconds,
-              sensorId: selectedSensor,
-            });
-            if (!fetchedMeasurements?.length) continue;
-            // PÄIVITETÄÄN CACHEA UUSILLA MITTAUKSILLA
-            setMeasurementsCache((prevCache) => {
-              const map = new Map(prevCache);
-              const measurementsAlreadyInCache = map.get(selectedSensor) || {
-                measurements: new Map<number, MeasurementType>(),
-                cachedDays: new Set<string>(),
-              };
-              fetchedMeasurements.forEach((measurement) => {
-                measurementsAlreadyInCache.measurements.set(
-                  measurement.timeStamp,
-                  measurement,
-                );
-              });
-              // DATE-OLIO HAETTUJEN POHJALTA (HAETAAN AINA TÄYSI VUOROKAUSI)
-              const dateObj = new Date(fetchedMeasurements[0].timeStamp * 1000);
-              measurementsAlreadyInCache.cachedDays.add(
-                dateObj.toLocaleDateString("fi-FI"),
-              );
-              map.set(selectedSensor, measurementsAlreadyInCache);
-              return map;
-            });
-          }
-        }
       }
     };
     fetch();
