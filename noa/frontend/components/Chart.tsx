@@ -1,6 +1,4 @@
 "use client";
-import { MeasurementType } from "@/types/Measurement";
-import { convertTime } from "@/utils/Date";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -10,9 +8,11 @@ import {
   LinearScale,
   LineElement,
   PointElement,
+  scales,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-
+import { convertUnixTimeToDay } from "../utils/Time";
+import { MeasurementType } from "../types/MeasurementCache";
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -22,15 +22,13 @@ ChartJS.register(
   LineElement,
   PointElement,
 );
-
-export const ChartComponent = ({
+export const ChartComponent2 = ({
   measurements,
   chartType,
 }: {
   measurements: MeasurementType[];
   chartType: "temperature" | "humidity";
 }) => {
-  // NÄYTTÄÄ VAIN ANNETUN DATAN!!! TILANHALLINTA SENSORCONTROLLER
   const isTemperatureChart = chartType === "temperature";
   const convertTailwindColor = (variableName: string) => {
     if (typeof window === "undefined") return "";
@@ -43,7 +41,7 @@ export const ChartComponent = ({
     : convertTailwindColor("--color-humidity");
   const chartData = {
     labels: measurements.map((measurement) =>
-      convertTime(measurement.timeStamp),
+      convertUnixTimeToDay(measurement.timeStamp),
     ),
     datasets: [
       {
@@ -59,6 +57,7 @@ export const ChartComponent = ({
       },
     ],
   };
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -70,10 +69,8 @@ export const ChartComponent = ({
     scales: {
       x: {
         ticks: {
+          autoSkip: true,
           maxTicksLimit: 5,
-          font: {
-            size: 10,
-          },
         },
       },
     },

@@ -5,10 +5,8 @@ import { SelectSensorComponent } from "./SelectSensor";
 import { useEffect, useState } from "react";
 import { MeasurementCache, MeasurementType } from "../types/MeasurementCache";
 import { ChartComponent2 } from "./Chart";
-import { getMeasurementsFromSensor } from "@/api/Measurements";
-import { convertDateToUnix, getCurrentDayUnixRange } from "../utils/Time";
+import { getCurrentDayUnixRange } from "../utils/Time";
 import { SelectDateComponent } from "./SelectDate";
-import { da } from "date-fns/locale";
 import { getDatesBetweenUnixTimestamps } from "../utils/Date";
 import { getMoreMeasurements } from "../utils/Fetch";
 
@@ -49,7 +47,6 @@ export const ClientComponent = ({
     const fetch = async () => {
       let timeRange;
       if (!selectedDateRange) {
-        console.log("Ei valittua ajanjaksoa. Käytetään nykyistä päivää.");
         timeRange = getCurrentDayUnixRange();
       } else {
         timeRange = selectedDateRange;
