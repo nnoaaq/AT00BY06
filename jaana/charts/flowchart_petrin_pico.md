@@ -4,7 +4,7 @@ Projektin yleiskuvaus: Raspberry Pi Pico 2W:n mittaus-,
 tallennus- ja AWS-tiedonsiirtoprosessi.
 
 ```mermaid
-flowchart TD
+flowchart LR
     A["Pico W käynnistyy"] -->B["Alustus"]
     B -->C["Wifi"]
     C -->D["Pääsilmukka"]
