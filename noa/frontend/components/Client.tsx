@@ -62,10 +62,42 @@ export const ClientComponent = ({
       // VAIKKA HAETTAISIINKIN TURHASTI PÄIVIÄ
       let missingDays = false;
       for (let dateToShow of datesToShow) {
-        const dateAlreadyInCache =
-          measurementsInCache.cachedDays.has(dateToShow);
-        if (!dateAlreadyInCache) {
-          missingDays = true;
+        if (dateToShow == new Date().toLocaleDateString("fi-FI")) {
+          // NYKYINEN PÄIVÄ HAETAAN AINA (JOTTA UUSIMMAT TULISI)
+          const fetchedMeasurements: MeasurementType[] =
+            await getMoreMeasurements({
+              ...getCurrentDayUnixRange(),
+              sensorId: selectedSensor,
+            });
+          if (!fetchedMeasurements.length) return;
+          // MITTAUSTULOKSIA ON TULLUT
+          setMeasurementsCache((prevCache) => {
+            const map = new Map(prevCache);
+            const measurementsInCache = measurementsCache.get(
+              selectedSensor,
+            ) || {
+              measurements: new Map<number, MeasurementType>(),
+              cachedDays: new Set<string>(),
+            };
+            fetchedMeasurements.forEach((measurement) => {
+              measurementsInCache.measurements.set(
+                measurement.timeStamp,
+                measurement,
+              );
+            });
+            datesToShow.forEach((date) => {
+              measurementsInCache.cachedDays.add(date);
+            });
+            map.set(selectedSensor, measurementsInCache);
+            return map;
+          });
+        } else {
+          console.log("tarkistettava", dateToShow);
+          const dateAlreadyInCache =
+            measurementsInCache.cachedDays.has(dateToShow);
+          if (!dateAlreadyInCache) {
+            missingDays = true;
+          }
         }
       }
       // AJANJAKSO TARKISTETTU
