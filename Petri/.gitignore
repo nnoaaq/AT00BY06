@@ -1,0 +1,4 @@
+build/
+!.vscode/*
+wifi_settings.h
+aws_settings.h
