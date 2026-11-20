@@ -12,12 +12,11 @@ auto_init_mutex(aon_timer_mutex);
 static bool aon_timer_is_initialised = false;
 
 // CALLBACK JOKA ASETTAA AON_TIMERIN NTP VASTAUKSEEN
-void sntp_set_system_time_us(uint32_t sec, uint32_t us)
+void ntp_set_time(uint32_t sec, uint32_t us)
 {
     static struct timespec ntp_ts;
     ntp_ts.tv_sec = sec;
     ntp_ts.tv_nsec = us * 1000;
-    printf("%ld\n\n", sec);
     if (aon_timer_is_initialised)
     {
         // AON_TIMER ON ALUSTETTU
@@ -27,23 +26,23 @@ void sntp_set_system_time_us(uint32_t sec, uint32_t us)
             // VARAUS OK
             aon_timer_set_time(&ntp_ts);
             mutex_exit(&aon_timer_mutex); // POISTETAAN VARAUS
-            printf("AON_TIMER_PÄIVITETTY!\n");
+            printf("Kello päivitetty.\n");
         }
         else
         {
-            printf("AON_TIMER oli varattuna.\n");
+            printf("Kello oli varattu. Uutta aikaa ei päivitetty.\n");
         }
     }
     else
     {
         // AON_TIMER EI ALUSTETTU
-        aon_timer_is_initialised = aon_timer_start(&ntp_ts); // ASETETAAN SE NTP VASTAUKSEN AJAKSI!!
-        printf("alustettu aon_timer!!\n");
+        aon_timer_is_initialised = aon_timer_start(&ntp_ts); // KÄYNNISTETÄÄN KELLO NTP-VASTAUKSEN AJASTA
+        printf("Kello käynnistetty.\n");
     }
 }
 
 // CALLBACK JONKA AVULLA LWIP/SNTP LUKEE AON_TIMERIA
-void sntp_get_system_time_us(uint32_t *sec_ptr, uint32_t *us_ptr)
+void ntp_get_time(uint32_t *sec_ptr, uint32_t *us_ptr)
 {
     static struct timespec sys_ts;
     aon_timer_get_time(&sys_ts);
@@ -65,4 +64,12 @@ int get_time(struct timespec *ts_ptr)
         }
     }
     return retval;
+}
+
+void ntp_init()
+{
+    // ALUSTETAAN NTP
+    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_init();
+    setenv("TZ", "EET-2EEST,M3.5.0/3,M10.5.0/4", 1);
 }
