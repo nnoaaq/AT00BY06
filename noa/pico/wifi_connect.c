@@ -104,10 +104,10 @@ wifi_state_t wifi_connect_poll()
     {
         break;
     }
-    defaul:
-        {
-            break;
-        }
+    default:
+    {
+        break;
+    }
     }
     return wifi_state;
 }

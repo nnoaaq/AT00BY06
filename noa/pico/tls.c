@@ -46,6 +46,7 @@ static err_t tls_client_close(void *arg)
         }
         state->pcb = NULL;
     }
+    free(state);
     return err;
 }
 

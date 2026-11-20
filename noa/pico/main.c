@@ -80,7 +80,6 @@ int main()
                 http_send(measurement, AWS_HOST);
             }
         }
-
         sleep_ms(60000 * 15);
     }
 }
