@@ -68,30 +68,51 @@ Vedä pinni 20 (GP15) maihin ja kytke virta. Käynnistyksessä laite tyhjentää
 
 Laite jatkaa toimintaa, kunnes paristot loppuvat. Akun varaus näkyy LCD:llä ja web-sivulla. Vaihda paristot, kun varaus on lähellä nollaa. Muisti säilyy vaihdon yli. Aika haetaan uudelleen verkosta, kun Wi-Fi on käytettävissä.
 
-## A8. Käyttöönotto. 
+## A8. Käyttöönotto
 
-Täytä `wifi_settings.h` 
+Ennen ohjelman asennusta täytetään kaksi asetustiedostoa. Tiedostot sijaitsevat projektin lähdekoodikansiossa.
 
+### 1. Wi-Fi-asetukset: `wifi_settings.h`
+
+```c
 #ifndef WIFI_SETTINGS_H
 #define WIFI_SETTINGS_H
 
-// Wi-Fi-tunnukset. Vaihda nämä omiksi verkkosi mukaan.
-
-#define WIFI_SSID "**********"
-#define WIFI_PASSWORD "**********"
+// Wi-Fi-tunnukset. Vaihda nämä oman verkkosi mukaan.
+#define WIFI_SSID     "verkon_nimi"
+#define WIFI_PASSWORD "verkon_salasana"
 
 #endif
+```
 
-ja `aws_settings.h`
+### 2. AWS-asetukset: `aws_settings.h`
 
+```c
 #ifndef AWS_SETTINGS_H
 #define AWS_SETTINGS_H
-#define AWS_HOST "evhpstet1f.execute-api.eu-north-1.amazonaws.com"
-#define AWS_PATH "/measurement/save"
-#define AWS_AUTHORIZATION "********"
-#define AWS_SENSOR_ID "********"
-#define AWS_SENSOR_NAME "********"
+
+#define AWS_HOST          "aws_host"
+#define AWS_PATH          "/measurement/save"
+#define AWS_AUTHORIZATION "authorization_avain"
+#define AWS_SENSOR_ID     "anturin_tunniste"
+#define AWS_SENSOR_NAME   "anturin_nimi"
+
 #endif
+```
+
+| Vakio | Merkitys |
+|---|---|
+| `WIFI_SSID` | Wi-Fi-verkon nimi |
+| `WIFI_PASSWORD` | Wi-Fi-verkon salasana |
+| `AWS_HOST` | Palvelimen osoite |
+| `AWS_PATH` | Pyynnön polku palvelimella |
+| `AWS_AUTHORIZATION` | Palvelimelta saatu avain. Lähetys ei käynnisty, jos arvoa ei ole täytetty. |
+| `AWS_SENSOR_ID` | Anturin yksilöivä tunniste |
+| `AWS_SENSOR_NAME` | Anturin nimi, joka näkyy palvelimella |
+
+> Tunnisteet eivät saa sisältää lainausmerkkejä, kenoviivoja tai ohjausmerkkejä.
+
+> **Tietoturva.** Tiedostot sisältävät salasanan ja avaimen. Älä lisää niitä versionhallintaan (esimerkiksi lisää ne `.gitignore`-tiedostoon) äläkä jaa niitä muille.
 
 -----------------------------------------------------------------------------------
 
