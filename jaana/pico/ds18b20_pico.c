@@ -7,6 +7,26 @@
 #include "onewire_library.h"
 #include "ow_rom.h"
 #include "ds18b20.h"
+#include "sensors_led.h"
+
+bool setup_onewire(OW *ow, PIO pio)
+{
+    if (!pio_can_add_program(pio, &onewire_program))
+    {
+        printf("Virhe: PIO-ohjelmaa ei voi lisätä!\n");
+        return false;
+    }
+
+    uint offset = pio_add_program(pio, &onewire_program);
+    if (!ow_init(ow, pio, offset, DS18B20_PIN))
+    {
+        printf("Virhe: 1-Wire-alustus epäonnistui!\n");
+        return false;
+    }
+
+    printf("1-Wire alustettu pinniin GPIO %d\n", DS18B20_PIN);
+    return true;
+}
 
 // Tämä funktio laskee ns. CRC8-tarkistussumman (Cyclic Redundancy Check) saaduille datatavuille.
 // Se varmistaa, että anturilta luettu data ei ole vioittunut matkalla (esim. sähköhäiriön takia). Algoritmi laskee datasta tarkistustavun, jota verrataan anturin lähettämään tarkistustavuun.
