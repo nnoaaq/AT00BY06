@@ -6,14 +6,16 @@
 
 #include "sensors_led.h"
 #include "measurements.h"
-#include "json.h"
+#include "json_pico.h"
 #include "pico_wifi_scan.h"
 #include "sensor_task.h"
-#include "http_client.h"
+#include "sensors_led.h"
+#include "tls.h"
 #include "ntp.h"
 #include "onewire_library.h"
+#include "aws.h"
 
-#define MEASUREMENT_INTERVAL_MS 10000
+#define MEASUREMENT_INTERVAL_MS 60000
 #define WIFI_SCAN_INTERVAL_MS 10000
 
 void setup_gpio(void)
@@ -35,78 +37,10 @@ void setup_gpio(void)
     printf("GPIO-alustus valmis\n");
 }
 
-bool setup_onewire(OW *ow, PIO pio)
-{
-    if (!pio_can_add_program(pio, &onewire_program))
-    {
-        printf("Virhe: PIO-ohjelmaa ei voi lisätä!\n");
-        return false;
-    }
-
-    uint offset = pio_add_program(pio, &onewire_program);
-    if (!ow_init(ow, pio, offset, DS18B20_PIN))
-    {
-        printf("Virhe: 1-Wire-alustus epäonnistui!\n");
-        return false;
-    }
-
-    printf("1-Wire alustettu pinniin GPIO %d\n", DS18B20_PIN);
-    return true;
-}
-void blink()
-{
-    sleep_ms(50);
-    gpio_put(LED_PIN, 1);
-    sleep_ms(100);
-    gpio_put(LED_PIN, 0);
-}
-
-void process_and_send_measurements(const char *dht_id, const char *ds_id)
-{
-    // Staattinen puskuri ei kuluta 2 KB:n pino-muistia (stack)?
-    static char json_buffer[1024];
-    bool all_sent = true;
-    if (current_epoch_time <= 0)
-    {
-        printf("Varoitus: NTP-aikaa ei ole vielä haettu (current_epoch_time == 0).\n");
-    }
-
-    // 1. Käsittele ja lähetä DHT22
-    int result1 = create_safe_json_dht(json_buffer, sizeof(json_buffer), dht_id, current_epoch_time);
-    if (result1 > 0)
-    {
-        printf("Lähetetään DHT22 JSON...\n");
-        // TODO: lähetys
-    }
-    else if (result1 == -1)
-    {
-        printf("Virhe DHT22: puskuri täynnä!\n");
-        // TODO: muuta
-    }
-
-    // TODO: tarkistetaan onnistuisko lähetys
-
-    // Nollataan laskuri, jos lähetys onnistui
-    if (all_sent && result1 > 0)
-    {
-        printf("...!\n");
-        blink();
-        blink();
-        measurement_count = 0;
-    }
-    else
-    {
-        printf("Lähetys epäonnistui – säilytetään mittaukset seuraavaa yritystä varten.\n");
-        // TEE: Tallennus
-        measurement_count = 0;
-    }
-}
-
 int main(void)
 {
     setup_gpio();
-    blink();
-    blink();
+
     NTP_T *ntp_state = NULL;
     bool ntp_started = false;
     OW ow;
@@ -193,7 +127,7 @@ int main(void)
             }
         }
 
-        // Anturimittaus 10 sekunnin välein ilman sleep
+        // Anturimittaus 60 sekunnin välein ilman sleep
         if (current_epoch_time > 0 && time_reached(next_measurement_time))
         {
             run_sensor_measurement_cycle(&ow);
@@ -202,7 +136,7 @@ int main(void)
             {
                 if (wifi_connected)
                 {
-                    process_and_send_measurements(dht_id, ds_id);
+                    process_and_send_measurements(dht_id, ds_id, wifi_connected);
                 }
                 else
                 {
@@ -210,7 +144,7 @@ int main(void)
                 }
             }
 
-            // Asetetaan seuraava mittausaika 10 sekunnin päähän
+            // Asetetaan seuraava mittausaika 60 sekunnin päähän
             next_measurement_time = make_timeout_time_ms(MEASUREMENT_INTERVAL_MS);
         }
 
