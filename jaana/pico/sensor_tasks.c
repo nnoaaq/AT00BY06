@@ -10,11 +10,11 @@ void run_sensor_measurement_cycle(OW *ow)
     float temperature = 0;
     float temperature2 = 0;
     float humidity = 0;
-    
+
     float humidity_result = 0;
     float temperature_result = 0;
     float temperature2_result = 0;
-    
+
     uint mittaus = 0;
     uint mittaus2 = 0;
     uint yritykset = 0;
@@ -23,11 +23,18 @@ void run_sensor_measurement_cycle(OW *ow)
     float differ_hum = -999;
     float differ_temp = -999;
 
-    const int MAX_YRITYKSET = 30; // Estetään ikuinen jumittuminen, jos anturit rikkoutuvat
-    const int MAX_MITTAUKSET = 10;
+    float final_temp_dht = 0;
+    float final_hum = 0;
+    float final_temp_ds = 0;
 
-    // Kerätään onnistuneita mittauksia (enintään 10 kpl tai 30 yritystä)
-    while (mittaus < MAX_MITTAUKSET && yritykset < MAX_YRITYKSET)
+    bool dht_changed = false;
+    bool ds_changed = false;
+
+    const int MAX_YRITYKSET = 30; // Estetään ikuinen jumittuminen, jos anturit rikkoutuvat
+    const int MITTAUKSET = 10;
+
+    // Kerätään onnistuneita mittauksia
+    while (mittaus < MITTAUKSET && yritykset < MAX_YRITYKSET)
     {
         yritykset++;
 
@@ -57,33 +64,36 @@ void run_sensor_measurement_cycle(OW *ow)
         }
     }
 
-    // Lasketaan keskiarvot ja tallennetaan
-    if (mittaus > 0 || mittaus2 > 0)
+    // Jos saatiin joitain mittauksia, lasketaan keskiarvot ja tallennetaan
+    if (mittaus2 > 0)
     {
-        float final_temp_dht = (mittaus > 0) ? (temperature_result / mittaus) : 0;
-        float final_hum = (mittaus > 0) ? (humidity_result / mittaus) : 0;
-        float final_temp_ds = (mittaus2 > 0) ? (temperature2_result / mittaus2) : 0;
+        ds_changed = true;
+        final_temp_ds = temperature2_result / mittaus2;
+
+        printf("Lampotila ds18b20: %.1f C\n", final_temp_ds);
+    }
+    if (mittaus > 0)
+    {
+        final_temp_dht = temperature_result / mittaus;
+        final_hum = humidity_result / mittaus;
 
         // Tallennetaan puskuriin, jos muutos on toleranssin ulkopuolella
-        differ_hum = last_humidity - final_temp_dht;
-        differ_temp = last_temperature - final_hum ;
+        differ_hum = last_humidity - final_hum;
+        differ_temp = last_temperature - final_temp_dht;
         if (fabsf(differ_temp) > 0.1f || fabsf(differ_hum) > 0.5f)
         {
-            printf("Lampotila dht: %.1f C\n", temperature);
-            printf("Kosteus: %.1f %%\n", humidity);
-            last_temperature = temperature;
-            last_humidity = humidity;
-
-            printf("Lampotila ds18b20: %.1f C\n", final_temp_ds);
-            save_measurement(final_temp_dht, final_hum, final_temp_ds);
-
-            printf("Measurement saved: %d/%d\n\n", measurement_count, MAX_MEASUREMENTS);
-            printf("-------------------\n");
+            dht_changed = true;
+            printf("Lampotila dht: %.1f C\n", final_temp_dht);
+            printf("Kosteus: %.1f %%\n", final_hum);
+            last_temperature = final_temp_dht;
+            last_humidity = final_hum;
         }
     }
-    else
-    {
-        printf("Kaikki mittaukset epäonnistuivat tällä kierroksella!\n");
-    }
 
+    if (dht_changed || ds_changed)
+    {
+        save_measurement(final_temp_dht, final_hum, final_temp_ds);
+        printf("Measurement saved: %d/%d\n\n", measurement_count, MAX_MEASUREMENTS);
+        printf("-------------------\n");
+    }
 }
