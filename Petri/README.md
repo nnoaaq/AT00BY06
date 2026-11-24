@@ -169,3 +169,178 @@ Tulokset: **Läpäisty**, **Kokeiltu** (tulos kirjattava tarkemmin), **Ei testat
 ## 6. Johtopäätökset
 
 Järjestelmä on osoittautunut luotettavaksi pitkäaikaisessa käytössä: yli 20 000 mittausminuuttia ilman kaatumisia ja toipuminen verkkokatkoista ja sauna-modesta. 
+
+
+# Pico 2 W -sääasema: kaaviot
+
+## 1. Lohkokaavio
+
+```mermaid
+flowchart TB
+  subgraph HW["Laitteisto"]
+    SENS["Anturit<br/>DHT22 + akku"]
+    BTN["Painike<br/>GP15 → GND"]
+    LCD["LCD 1602<br/>PCF8574, 0x27"]
+  end
+
+  subgraph PICO["Raspberry Pi Pico 2 W"]
+    MEAS["Mittaus<br/>DHT22 + ADC"]
+    AVG["Keskiarvot<br/>1 / 15 / 60 min"]
+    LCDD["LCD-ohjain<br/>I2C, 1 min"]
+    FLASH["Flash<br/>120 mittausta"]
+    AWSC["AWS-asiakas<br/>TLS, HTTPS"]
+    HTTP["HTTP-palvelin<br/>portti 80"]
+    CLK["Kello<br/>SNTP → UTC"]
+    WIFI["Wi-Fi-piiri (CYW43) + lwIP"]
+  end
+
+  NTP["NTP<br/>pool.ntp.org"]
+  BROWSER["Selain<br/>LAN, portti 80"]
+  AWS["AWS<br/>HTTPS 443"]
+
+  SENS --> MEAS --> AVG
+  AVG --> LCDD --> LCD
+  AVG --> FLASH --> AWSC
+  BTN --> FLASH
+  CLK <--> WIFI
+  AWSC <--> WIFI
+  HTTP <--> WIFI
+  WIFI <--> NTP
+  WIFI <--> BROWSER
+  WIFI <--> AWS
+
+  classDef hw fill:#E1F5EE,stroke:#0F6E56,color:#085041
+  classDef fw fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  classDef ext fill:#F1EFE8,stroke:#5F5E5A,color:#444441
+  class SENS,BTN,LCD,WIFI hw
+  class MEAS,AVG,LCDD,FLASH,AWSC,HTTP,CLK fw
+  class NTP,BROWSER,AWS ext
+```
+
+## 2. Vuokaavio: käynnistys
+
+```mermaid
+flowchart TD
+  A["I2C + LCD-alustus"] --> B["ADC + GPIO-alustus"]
+  B --> C{"Painike alas?"}
+  C -- kyllä --> D["Tyhjennä flash"]
+  D --> E["load_storage()"]
+  C -- ei --> E
+  E --> F["Luo asetustunniste"]
+  F --> G{"Wi-Fi-piiri OK?"}
+  G -- kyllä --> H["STA-tila päälle"]
+  G -- ei --> J["Ilman verkkoa"]
+  H --> I(["Pääsilmukka"])
+  J --> I
+```
+
+## 3. Vuokaavio: pääsilmukka
+
+```mermaid
+flowchart TD
+  A["Verkko + USB -palvelut"] --> B{"Uusi asetus?"}
+  B -- kyllä --> B1["Aseta väli<br/>sauna / normaali"]
+  B1 --> C{"10 s kulunut?"}
+  B -- ei --> C
+  C -- kyllä --> C1["Lue anturit<br/>DHT22 + Pico-lämpö"]
+  C1 --> D{"1 min kulunut?"}
+  C -- ei --> D
+  D -- kyllä --> D1["Päivitä näyttö<br/>LCD + web-sivu"]
+  D1 --> E{"Tallennusväli?"}
+  D -- ei --> E
+  E -- kyllä --> E1["Tallenna<br/>flash + AWS-lähetys"]
+  E1 --> F["sleep 1 ms"]
+  E -- ei --> F
+  F --> A
+```
+
+## 4. Vuokaavio: historian lähetys AWS:ään
+
+```mermaid
+flowchart TD
+  subgraph MAIN["Pääsilmukka: service_history_send()"]
+    A["service_history_send()"] --> B{"Ehdot OK?"}
+    B -- kyllä --> C["Seuraava mittaus"]
+    C --> D{"Jäljellä?"}
+    D -- kyllä --> E["aws_submit_measurement()"]
+    B -- ei --> Z(["Palaa pääsilmukkaan"])
+    D -- ei --> Z
+    E --> Z
+  end
+
+  subgraph ASYNC["AWS-asiakas (asynkroninen)"]
+    R1["DNS + TLS, portti 443"] --> R2["POST + JSON"]
+    R2 --> R3{"Vastaus: HTTP 2xx?"}
+    R3 --> R4["last_send_ok, sulje"]
+  end
+
+  E -. käynnistää .-> R1
+```
+
+## 5. Kytkentäkaavio: DHT22, painike ja LCD
+
+Mermaid ei tue piirikaavioita, joten tämä näyttää vain nastat ja liitännät.
+
+```mermaid
+flowchart LR
+  subgraph PICO["Pico 2 W"]
+    P3V["3V3(OUT) · pin 36"]
+    P28["GP28 · pin 34"]
+    P15["GP15 · pin 20"]
+    P4["GP4 SDA · pin 6"]
+    P5["GP5 SCL · pin 7"]
+    PG["GND · pin 38"]
+  end
+
+  subgraph DHT["DHT22"]
+    DV["VCC"]
+    DD["DATA"]
+    DG["GND"]
+  end
+
+  subgraph LCDM["LCD + I2C-moduuli"]
+    LV["VCC"]
+    LSDA["SDA"]
+    LSCL["SCL"]
+    LG["GND"]
+  end
+
+  R1["R1 10 kΩ vetovastus"]
+  S1["Painike S1<br/>pull-up ohjelmassa"]
+
+  P3V --- DV
+  P3V --- R1
+  R1 --- DD
+  P28 --- DD
+  PG --- DG
+  P15 --- S1
+  S1 --- PG
+  P4 --- LSDA
+  P5 --- LSCL
+  P3V --- LV
+  PG --- LG
+```
+
+## 6. Kytkentäkaavio: akun jännitteenjakaja
+
+```mermaid
+flowchart LR
+  BAT["Akku<br/>2,1–3,0 V"]
+  VSYS["Pico VSYS · pin 39"]
+  R2["R2 100 kΩ"]
+  VOUT(("Vout = U / 2"))
+  R3["R3 100 kΩ"]
+  C2["C2 100 nF<br/>(suositus)"]
+  ADC["Pico GP26 / ADC0 · pin 31"]
+  AGND["Pico AGND · pin 33"]
+
+  BAT -- "+" --> VSYS
+  BAT -- "+" --> R2
+  R2 --- VOUT
+  VOUT --- R3
+  VOUT --- C2
+  VOUT --> ADC
+  R3 --- AGND
+  C2 --- AGND
+  BAT -- "−" --- AGND
+```
