@@ -120,8 +120,13 @@ export const ChartComponent2 = ({
       },
       y: {
         ticks: {
-          callback: (value: string | number) =>
-            `${value}${isTemperatureChart ? " °C" : " %"}`,
+          callback: (value: string | number) => {
+            const numericValue = Number(value);
+            if (Number.isNaN(numericValue)) return value;
+
+            const formatted = numericValue.toFixed(1);
+            return `${formatted}${isTemperatureChart ? " °C" : " %"}`;
+          },
         },
       },
     },
