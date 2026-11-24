@@ -54,20 +54,6 @@ int main()
     char measurement[256];
     while (true)
     {
-        // if (wifi_is_connected())
-        //{
-        //     if (get_measured_temperature(measurement, sizeof(measurement)))
-        //     {
-        //         printf("%s\n", measurement);
-        //         printf("Lähetetään mittaus palvelimelle.\n\n");
-        //         http_send(measurement, AWS_HOST);
-        //     }
-        // }
-        // else
-        //{
-        //     printf("Ei verkkoyhteyttä\n");
-        //     connect_to_wifi();
-        // }
 
         wifi_connect_poll();
 
@@ -80,6 +66,11 @@ int main()
                 http_send(measurement, AWS_HOST);
             }
         }
+           else
+        {
+             printf("Ei verkkoyhteyttä\n");
+            connect_to_wifi();
+         }
         sleep_ms(60000 * 15);
     }
 }
