@@ -155,7 +155,7 @@ Tulokset: **Läpäisty**, **Kokeiltu** (tulos kirjattava tarkemmin), **Ei testat
 | T1 | Pitkäaikaiskäyttö | Laite toimii ilman kaatumisia | **Läpäisty** | Yli 20 000 mittausminuuttia (noin 13,9 vrk). Ei kaatumisia. |
 | T2 | Verkkokatko | Mittaus jatkuu paikallisesti, Wi-Fi yhdistyy uudelleen | **Läpäisty** | Verkko on ollut alhaalla eikä laite ole kaatunut. Historian lähetyksen jatkuminen yhteyden palattua: **Läpäisty** |
 | T3 | Sauna-mode: käynnistys ja paluu | Tallennus 1 min välein, Wi-Fi pois, paluu normaaliin | **Läpäisty** | Laite on palautunut sauna-modesta. Palautumistapa: **Läpäisty** |
-| T4 | Akun loppuminen | Laite sammuu hallitusti, muisti säilyy | **Kokeiltu** | Laite on pysähtynyt vain paristojen loppuessa. Toiminta-aika: `[täydennä]`. Muistin säilyminen ja käynnistys uusilla paristoilla: **Läpäisty**. |
+| T4 | Akun loppuminen | Laite sammuu hallitusti, muisti säilyy | **Kokeiltu** | Laite on pysähtynyt vain paristojen loppuessa. Toiminta-aika: Noin 24h. Muistin säilyminen ja käynnistys uusilla paristoilla: **Läpäisty**. |
 | T5 | Virran katkaisu ja uudelleenkäynnistys | Historia latautuu flashista, minuuttilaskuri jatkuu | **Läpäisty** |
 | T6 | SNTP-synkronointi | Aika haetaan, aikaleimat oikein (EET/EEST) | **Läpäisty** |
 | T7 | AWS-lähetys | Palvelin vastaa 2xx, mittaukset tallentuvat | **Läpäisty** | Duplikaattien käsittely aws:n päässä | **Läpäisty** |
