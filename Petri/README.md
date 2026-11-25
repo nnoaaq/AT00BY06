@@ -118,7 +118,7 @@ Ennen ohjelman asennusta täytetään kaksi asetustiedostoa. Tiedostot sijaitsev
 
 # Pico 2 W -sääasema: testausraportti
 
-Päiväys: xx.xx.2026
+Päiväys: 25.11.2026
 Testaaja: Petri Markkanen
 
 ## 1. Yhteenveto
